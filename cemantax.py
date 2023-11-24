@@ -23,13 +23,7 @@ DIC_PATH = os.path.join(
     "superdic.txt"
 )
 
-URL = "https://cemantix.herokuapp.com/score"
-
-
-# UTILS
-def warn(*args):
-    print("Warning: ", end="", file=sys.stderr)
-    print(*args, file=sys.stderr)
+URL = "https://cemantix.certitudes.org/score"
 
 
 # REQUESTS
@@ -37,11 +31,13 @@ def _post(url, data=None):
     res = None
     for _ in range(10):
         try:
-            res = requests.post(url, data=data)
+            res = requests.post(url, data=data, headers={
+                "Origin": "https://cemantix.certitudes.org"
+            })
             if res.status_code != 200:
                 raise requests.RequestException
         except requests.RequestException:
-            warn("request failed for url:", url)
+            print("Warning: request failed for url:", url)
             time.sleep(1)
         else:
             break
@@ -55,7 +51,7 @@ def post_word(word):
     try:
         return res.json()
     except ValueError:
-        warn("json decode failed - content:", res.content.decode())
+        print("Warning: json decode failed - content:", res.content.decode())
         return None
 
 
